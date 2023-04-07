@@ -75,7 +75,6 @@ int queue_push(m_queue* q, int ele)
 
 int queue_init(m_queue* q, int size)
 {
-    q = (m_queue*)malloc(sizeof(m_queue));
     if (q == NULL) {
         printf("Error in %s\n", __FUNCTION__);
         return -1;
@@ -83,7 +82,7 @@ int queue_init(m_queue* q, int size)
     
     // init data
     q->data = NULL;
-    q->data = (int*)malloc(sizeof(int) * MAX_QUEUE_ELE_NUM)；
+    q->data = (int*)malloc(sizeof(int) * MAX_QUEUE_ELE_NUM);
     if (q->data == NULL) {
         printf("init failed: q->data null\n");
         return -1;
@@ -115,6 +114,12 @@ m_queue* queue_clear(m_queue* q)
 
 m_queue* queue_destroy(m_queue* q)
 {
-    
+    queue_clear(q);
+    pthread_mutex_lock(&q->mutex);
+    free(q->data);
+    q->data = NULL;
+    pthread_mutex_unlock(&q->mutex);
+    pthread_mutext_destroy(&q->mutex);
+    return q;
 }
 
